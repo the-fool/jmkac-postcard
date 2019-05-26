@@ -1,14 +1,13 @@
 import { NgModule } from '@angular/core'
 import { Routes, RouterModule } from '@angular/router'
 import { AuthGuard } from './services'
-import { AppComponent } from './app.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/admin', pathMatch: 'full' },
   {
     path: 'admin',
     loadChildren: './admin/module#AdminModule',
-    canActivate: [AuthGuard],
+  //  canActivate: [AuthGuard],
   },
   {
     path: 'auth',

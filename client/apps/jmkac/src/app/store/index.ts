@@ -1,27 +1,36 @@
 import { InjectionToken } from '@angular/core'
-import { ActionReducerMap, Action, ActionReducer, MetaReducer, createSelector, createFeatureSelector } from '@ngrx/store'
+import {
+  ActionReducerMap,
+  Action,
+  ActionReducer,
+  MetaReducer,
+  createSelector,
+  createFeatureSelector
+} from '@ngrx/store'
+import * as fromPostcards from './postcards/reducer'
 import * as fromSession from './session/reducer'
-import { environment } from '../../environments/environment';
-import * as sessionSelectors from './session/selectors';
-import { RouterEffects } from './router/effects';
-import { SessionEffects } from './session/effects';
+import { environment } from '../../environments/environment'
+import * as sessionSelectors from './session/selectors'
+import { RouterEffects } from './router/effects'
+import { SessionEffects } from './session/effects'
+import { PostcardEffects } from './postcards/effects'
 
 export interface State {
-    session: fromSession.State
+  session: fromSession.State
+  postcards: fromPostcards.State
 }
 
 export const REDUCERS = new InjectionToken<ActionReducerMap<State, Action>>(
-    'Root Reducer Token', {
-        factory: () => ({
-            session: fromSession.reducer
-        })
-    }
+  'Root Reducer Token',
+  {
+    factory: () => ({
+      session: fromSession.reducer,
+      postcards: fromPostcards.reducer
+    })
+  }
 )
 
-export const EFFECTS = [
-  RouterEffects,
-  SessionEffects
-]
+export const EFFECTS = [RouterEffects, SessionEffects, PostcardEffects]
 
 // console.log all actions
 export function logger(reducer: ActionReducer<State>): ActionReducer<State> {
@@ -46,12 +55,33 @@ export const metaReducers: MetaReducer<State>[] = !environment.production
   ? [logger]
   : []
 
+const selectSession = createFeatureSelector<State, fromSession.State>(
+  'session'
+)
 
-const selectSession = createFeatureSelector<State, fromSession.State>('session');
+const selectPostcards = createFeatureSelector<State, fromPostcards.State>(
+  'postcards'
+)
 
 export const selectors = {
   session: {
-    valid: createSelector(selectSession, sessionSelectors.valid),
-    status: createSelector(selectSession, sessionSelectors.status)
+    valid: createSelector(
+      selectSession,
+      sessionSelectors.valid
+    ),
+    status: createSelector(
+      selectSession,
+      sessionSelectors.status
+    )
+  },
+  postcards: {
+    collection: createSelector(
+      selectPostcards,
+      fromPostcards.selectors.collection
+    ),
+    connected: createSelector(
+      selectPostcards,
+      fromPostcards.selectors.connected
+    )
   }
 }
