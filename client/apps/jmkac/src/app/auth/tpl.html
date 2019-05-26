@@ -1,0 +1,23 @@
+<h1>Status: {{ status$ | async }}</h1>
+
+<form (ngSubmit)="submit()" #loginForm="ngForm">
+  <div class="form-group">
+    <label for="pin">PIN </label>
+    <input
+      [(ngModel)]="pin"
+      class="form-control"
+      id="pin"
+      name="pin"
+      type="number"
+      required
+    />
+  </div>
+
+  <button
+    type="submit"
+    class="btn btn-success"
+    [disabled]="!loginForm.form.valid"
+  >
+    Submit
+  </button>
+</form>
